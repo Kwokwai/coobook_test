@@ -6,6 +6,23 @@ class UrlTemplate:
         self.template = template
 
     def open(self, **kwargs):
-        return urlopen(self.template.format_app(kwargs))
+        return urlopen(self.template.format_map(kwargs))
+
+
+
+yahoo = UrlTemplate('http://finance.yahoo.com/d/quotes.csv?s={names}&f={fields}')
+for line in yahoo.open(names='IBM, APPL, FB', fields='sl1c1v'):
+    print(line.decode('utf-8'))
+
+
+def urltemplate(template):
+    def opener(**kwargs):
+        return urlopen(template.format_map(kwargs))
+    return opener
+
+
+yahoo = urltemplate('http://finance.yahoo.com/d/quotes.csv?s={names}&f={fields}')
+for line in yahoo(names='IBM, APPL, FB', fields='sl1c1v'):
+    print(line.decode('utf-8'))
 
     
